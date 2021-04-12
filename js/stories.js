@@ -44,7 +44,7 @@ async function toggleFavorite(evt) {
   try {
     console.debug("toggleFavorite");
 
-    const $target = $(evt.tatget);
+    const $target = $(evt.target);
     const $closestLi = $target.closest("li");
     const storyId = $closestLi.attr("id");
     const targetStory = storyList.stories.find((s) => s.storyId === storyId);
@@ -60,16 +60,16 @@ async function toggleFavorite(evt) {
     console.log(err);
   }
 }
-
+$favoriteList.on("click", ".heart", toggleFavorite);
 $allStoriesList.on("click", ".heart", toggleFavorite);
-
+$ownStoriesList.on("click", ".heart", toggleFavorite);
 /**
  * A render method to render HTML for an individual Story instance
  * - story: an instance of Story
  *
  * Returns the markup for the story.
  */
-function generateStoryMarkup(story) {
+function generateStoryMarkup(story, showDeleteBtn = false) {
   // console.debug("generateStoryMarkup", story);
   const showHeart = Boolean(currentUser);
 
@@ -77,6 +77,7 @@ function generateStoryMarkup(story) {
   return $(`
       <li id="${story.storyId}">
         ${showHeart ? getHeart(story, currentUser) : ""}
+        ${showDeleteBtn ? getDeleteBtn(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -85,6 +86,26 @@ function generateStoryMarkup(story) {
         <small class="story-user">posted by ${story.username}</small>
       </li>
     `);
+}
+
+async function deleteStory(evt) {
+  evt.preventDefault();
+
+  const $target = $(evt.target);
+  const $closestLi = $target.closest("li");
+  const storyId = $closestLi.attr("id");
+
+  await storyList.deleteOwnStory(currentUser, storyId);
+}
+
+$ownStoriesList.on("click", ".fa-trash-alt", deleteStory);
+
+function getDeleteBtn(story, user) {
+  return `
+  <span class="deleteBtn">
+  <i class="fas fa-trash-alt"></i>
+  </span>
+  `;
 }
 
 function getHeart(story, user) {
@@ -112,18 +133,21 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-// async addStory(user, { title, author, url }) {
-//   let token = user.loginToken;
-//   const response = await axios({
-//     url: `${BASE_URL}/stories`,
-//     method: "POST",
-//     data: { token, story: { title, author, url } },
-//   });
-//   const newStory = new Story(response.data.story);
-//   this.stories.unshift(newStory);
-//   user.ownStories.unshift(newStory);
-//   return newStory;
-// }
+async function putOwnStoriesOnPage() {
+  console.debug("putOwnStoriesOnPage");
+
+  $ownStoriesList.empty();
+
+  if (currentUser.ownStories.length === 0) {
+    $ownStoriesList.append("<h4>No user's stories added!</h4>");
+  } else {
+    for (let ownStories of currentUser.ownStories) {
+      const $withDeleteBtn = generateStoryMarkup(ownStories, true);
+      $ownStoriesList.append($withDeleteBtn);
+    }
+  }
+  $ownStoriesList.show();
+}
 
 async function addStoryOnList(evt) {
   evt.preventDefault();

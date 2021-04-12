@@ -13,6 +13,7 @@ function navAllStories(evt) {
   putStoriesOnPage();
   $appendedProfile.hide();
   $favoriteList.hide();
+  $ownStoriesList.hide();
 }
 
 $body.on("click", "#nav-all", navAllStories);
@@ -49,6 +50,8 @@ function navStorySubmitClick(evt) {
   $storyForm.slideDown();
   $appendedProfile.hide();
   $favoriteList.hide();
+  $allStoriesList.show();
+  $ownStoriesList.hide();
 }
 
 $navStorySubmit.on("click", navStorySubmitClick);
@@ -59,6 +62,7 @@ function profileClick(evt) {
   hidePageComponents();
   $appendedProfile.slideDown();
   $favoriteList.hide();
+  $ownStoriesList.hide();
 }
 
 $navUserProfile.on("click", profileClick);
@@ -68,7 +72,21 @@ function favoriteClick(evt) {
   console.debug("favoriteClicked", evt);
   hidePageComponents();
   $appendedProfile.hide();
+  $ownStoriesList.hide();
+
   putFavoritesOnPage();
 }
 
 $navFavorites.on("click", favoriteClick);
+
+function myStoriesClick(evt) {
+  const $appendedProfile = $("#addedProfile");
+  console.debug("myStoriesClicked", evt);
+  hidePageComponents();
+  $appendedProfile.hide();
+  $favoriteList.hide();
+
+  putOwnStoriesOnPage();
+}
+
+$navMyStories.on("click", myStoriesClick);

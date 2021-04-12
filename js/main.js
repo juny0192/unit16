@@ -27,7 +27,9 @@ const $userProfileForm = $("#user-profile");
 const $authorNameIpt = $("#author-name");
 const $titleNameIpt = $("#title-name");
 const $urlAddressIpt = $("#url-address");
+
 const $favoriteList = $("#favorite-stories");
+const $ownStoriesList = $(".my-story-list");
 
 /** To make it easier for individual components to show just themselves, this
  * is a useful function that hides pretty much everything on the page. After

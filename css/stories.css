@@ -40,3 +40,7 @@
 .heart:hover {
   cursor: pointer;
 }
+
+.fa-trash-alt:hover {
+  cursor: pointer;
+}
